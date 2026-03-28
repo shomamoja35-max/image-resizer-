@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useId, useMemo, useState } from "react";
 
 const OUTPUT_FORMATS = ["jpeg", "png", "webp", "avif"];
 
@@ -10,6 +10,9 @@ type Props = {
   subtitle: string;
   convertLabel: string;
   defaultFormat?: string;
+  /** Match landing hero layout: large dropzone, optional title hidden when hero is above */
+  variant?: "default" | "landing";
+  hideTitle?: boolean;
 };
 
 export function ConverterWorkbench({
@@ -17,7 +20,10 @@ export function ConverterWorkbench({
   subtitle,
   convertLabel,
   defaultFormat = "jpeg",
+  variant = "default",
+  hideTitle = false,
 }: Props) {
+  const inputId = useId();
   const [files, setFiles] = useState<File[]>([]);
   const [sourceUrl, setSourceUrl] = useState("");
   const [quality, setQuality] = useState(80);
@@ -40,7 +46,7 @@ export function ConverterWorkbench({
   const beforePreviewUrls = useMemo(() => files.map((file) => URL.createObjectURL(file)), [files]);
 
   const selectedLabel = useMemo(() => {
-    if (!files.length) return "Drag & drop, click upload, or paste image";
+    if (!files.length) return null;
     if (files.length === 1) return files[0].name;
     return `${files.length} files selected`;
   }, [files]);
@@ -159,180 +165,231 @@ export function ConverterWorkbench({
     }
   }
 
-  return (
-    <section className="container-shell py-8 md:py-12">
-      <div className="rounded-2xl bg-card p-6 shadow-sm ring-1 ring-slate-200">
-        <h1 className="text-3xl font-semibold">{title}</h1>
-        <p className="mt-2 text-slate-600">{subtitle}</p>
+  const sectionPad = variant === "landing" ? "py-8 md:py-12" : "py-8 md:py-10";
+  const titleClass =
+    variant === "landing"
+      ? "text-3xl font-bold tracking-tight text-gray-900 dark:text-white md:text-4xl"
+      : "text-2xl font-bold tracking-tight text-gray-900 dark:text-white md:text-3xl";
 
-        <div className="mt-6 grid gap-6 md:grid-cols-2">
-          <div
-            className="space-y-3"
-            onDragOver={(e) => e.preventDefault()}
-            onDrop={(e) => {
-              e.preventDefault();
-              handleFileSelection(e.dataTransfer.files);
-            }}
-            onPaste={(e) => {
-              const items = Array.from(e.clipboardData.files);
-              if (items.length) setFiles((prev) => [...prev, ...items]);
-            }}
-          >
-            <label className="flex min-h-48 cursor-pointer items-center justify-center rounded-xl border-2 border-dashed border-slate-300 bg-slate-50 p-4 text-center text-slate-500">
-              {selectedLabel}
-              <input
-                name="files"
-                className="hidden"
-                type="file"
-                accept="image/*"
-                multiple
-                onChange={(e) => handleFileSelection(e.target.files)}
-              />
-            </label>
-            <div className="flex gap-2">
-              <input
-                className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm"
-                placeholder="Paste image URL"
-                value={sourceUrl}
-                onChange={(e) => setSourceUrl(e.target.value)}
-              />
+  return (
+    <section className={`container-shell ${sectionPad}`}>
+      <div className="w-full min-w-0">
+          {!hideTitle ? (
+            <div className={variant === "landing" ? "text-center" : ""}>
+              <h1 className={titleClass}>{title}</h1>
+              <p
+                className={`mt-2 text-base text-gray-600 dark:text-gray-400 ${variant === "landing" ? "mx-auto max-w-2xl" : ""}`}
+              >
+                {subtitle}
+              </p>
+            </div>
+          ) : null}
+
+          <div className={`space-y-6 ${hideTitle ? "mt-0" : "mt-8"}`}>
+            <div
+              className="space-y-4"
+              onDragOver={(e) => e.preventDefault()}
+              onDrop={(e) => {
+                e.preventDefault();
+                handleFileSelection(e.dataTransfer.files);
+              }}
+              onPaste={(e) => {
+                const items = Array.from(e.clipboardData.files);
+                if (items.length) setFiles((prev) => [...prev, ...items]);
+              }}
+            >
+              <label
+                htmlFor={inputId}
+                className="flex min-h-[220px] cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed border-blue-200 bg-blue-50/80 p-8 text-center transition hover:border-blue-300 hover:bg-blue-50 dark:border-blue-900/50 dark:bg-blue-950/40 dark:hover:border-blue-800 dark:hover:bg-blue-950/60 md:min-h-[280px] md:p-12"
+              >
+                <span className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-white shadow-sm ring-1 ring-blue-100 dark:bg-gray-900 dark:ring-blue-900/50">
+                  <svg
+                    className="h-8 w-8 text-blue-500 dark:text-blue-400"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    aria-hidden
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={1.5}
+                      d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+                    />
+                  </svg>
+                </span>
+
+                <span className="inline-flex items-center gap-2 rounded-lg border border-blue-200 bg-white px-5 py-2.5 text-sm font-semibold text-blue-700 shadow-sm transition hover:bg-blue-50 dark:border-blue-800 dark:bg-gray-900 dark:text-blue-300 dark:hover:bg-blue-950/50">
+                  Select Images
+                  <svg className="h-4 w-4 opacity-70" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
+                </span>
+
+                <span className="mt-2 text-sm text-gray-600 dark:text-gray-400">or drag and drop images here</span>
+                {selectedLabel ? (
+                  <span className="mt-2 text-sm font-medium text-blue-700 dark:text-blue-400">{selectedLabel}</span>
+                ) : null}
+                <p className="mt-3 text-xs text-gray-500 dark:text-gray-500">Max file size 20MB. All files are secure.</p>
+
+                <input
+                  id={inputId}
+                  name="files"
+                  className="sr-only"
+                  type="file"
+                  accept="image/*"
+                  multiple
+                  onChange={(e) => handleFileSelection(e.target.files)}
+                />
+              </label>
+
+              <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+                <input
+                  className="w-full flex-1 rounded-lg border border-gray-300 bg-white px-3 py-2.5 text-sm text-gray-900 shadow-sm placeholder:text-gray-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-100 dark:placeholder:text-gray-500"
+                  placeholder="Paste image URL"
+                  value={sourceUrl}
+                  onChange={(e) => setSourceUrl(e.target.value)}
+                />
+                <button
+                  type="button"
+                  className="rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm font-semibold text-gray-700 shadow-sm transition hover:bg-gray-50 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-200 dark:hover:bg-gray-800"
+                  onClick={handleUrlUpload}
+                >
+                  Add URL
+                </button>
+              </div>
+            </div>
+
+            <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm ring-1 ring-gray-100 dark:border-gray-700 dark:bg-gray-900 dark:ring-gray-800 md:p-6">
+              <div className="grid grid-cols-2 gap-3">
+                <label className="text-sm">
+                  <span className="mb-1 block font-medium text-gray-700 dark:text-gray-300">Width</span>
+                  <input
+                    type="number"
+                    placeholder="auto"
+                    className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-gray-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 dark:border-gray-600 dark:bg-gray-950 dark:text-gray-100"
+                    value={width}
+                    onChange={(e) => handleWidthChange(e.target.value)}
+                  />
+                </label>
+                <label className="text-sm">
+                  <span className="mb-1 block font-medium text-gray-700 dark:text-gray-300">Height</span>
+                  <input
+                    type="number"
+                    placeholder="auto"
+                    className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-gray-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 dark:border-gray-600 dark:bg-gray-950 dark:text-gray-100"
+                    value={height}
+                    onChange={(e) => handleHeightChange(e.target.value)}
+                  />
+                </label>
+              </div>
+
+              <label className="mt-4 flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300">
+                <input
+                  type="checkbox"
+                  className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-950"
+                  checked={maintainRatio}
+                  onChange={(e) => setMaintainRatio(e.target.checked)}
+                />
+                Maintain aspect ratio
+              </label>
+
+              <div className="mt-4">
+                <p className="mb-1 text-sm font-medium text-gray-700 dark:text-gray-300">Compression ({quality}%)</p>
+                <input
+                  type="range"
+                  min={0}
+                  max={100}
+                  value={quality}
+                  onChange={(e) => setQuality(Number(e.target.value))}
+                  className="h-2 w-full cursor-pointer accent-blue-600"
+                />
+              </div>
+
+              <div className="mt-4">
+                <p className="mb-1 text-sm font-medium text-gray-700 dark:text-gray-300">Convert to</p>
+                <select
+                  className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2.5 text-gray-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 dark:border-gray-600 dark:bg-gray-950 dark:text-gray-100"
+                  value={format}
+                  onChange={(e) => setFormat(e.target.value)}
+                >
+                  {OUTPUT_FORMATS.map((item) => (
+                    <option key={item} value={item}>
+                      {item.toUpperCase()}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <label className="mt-4 flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300">
+                <input
+                  type="checkbox"
+                  className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-950"
+                  checked={stripMetadata}
+                  onChange={(e) => setStripMetadata(e.target.checked)}
+                />
+                Remove metadata
+              </label>
+
               <button
                 type="button"
-                className="rounded-md border border-slate-300 px-3 py-2 text-sm"
-                onClick={handleUrlUpload}
+                className="mt-4 w-full rounded-lg bg-blue-600 px-4 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700 disabled:opacity-60"
+                onClick={handleConvert}
+                disabled={isProcessing}
               >
-                Add URL
+                {isProcessing ? "Processing..." : convertLabel}
               </button>
-            </div>
-          </div>
 
-          <div className="space-y-4 rounded-xl border border-slate-200 p-4">
-            <div className="grid grid-cols-2 gap-3">
-              <label className="text-sm">
-                <span className="mb-1 block font-medium">Width</span>
-                <input
-                  type="number"
-                  placeholder="auto"
-                  className="w-full rounded-md border border-slate-300 px-3 py-2"
-                  value={width}
-                  onChange={(e) => handleWidthChange(e.target.value)}
-                />
-              </label>
-              <label className="text-sm">
-                <span className="mb-1 block font-medium">Height</span>
-                <input
-                  type="number"
-                  placeholder="auto"
-                  className="w-full rounded-md border border-slate-300 px-3 py-2"
-                  value={height}
-                  onChange={(e) => handleHeightChange(e.target.value)}
-                />
-              </label>
-            </div>
-
-            <label className="flex items-center gap-2 text-sm">
-              <input
-                type="checkbox"
-                checked={maintainRatio}
-                onChange={(e) => setMaintainRatio(e.target.checked)}
-              />
-              Maintain aspect ratio
-            </label>
-
-            <div>
-              <p className="mb-1 text-sm font-medium">Compression ({quality}%)</p>
-              <input
-                type="range"
-                min={0}
-                max={100}
-                value={quality}
-                onChange={(e) => setQuality(Number(e.target.value))}
-                className="w-full"
-              />
-            </div>
-
-            <div>
-              <p className="mb-1 text-sm font-medium">Convert to</p>
-              <select
-                className="w-full rounded-md border border-slate-300 px-3 py-2"
-                value={format}
-                onChange={(e) => setFormat(e.target.value)}
-              >
-                {OUTPUT_FORMATS.map((item) => (
-                  <option key={item} value={item}>
-                    {item.toUpperCase()}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <label className="flex items-center gap-2 text-sm">
-              <input
-                type="checkbox"
-                checked={stripMetadata}
-                onChange={(e) => setStripMetadata(e.target.checked)}
-              />
-              Remove metadata
-            </label>
-
-            <button
-              className="w-full rounded-md bg-slate-900 px-4 py-2 font-medium text-white disabled:opacity-60"
-              onClick={handleConvert}
-              disabled={isProcessing}
-            >
-              {isProcessing ? "Processing..." : convertLabel}
-            </button>
-
-            {error ? <p className="text-sm text-red-600">{error}</p> : null}
-            {downloadUrl ? (
-              <div className="space-y-2">
-                <a
-                  className="block w-full rounded-md border border-slate-300 px-4 py-2 text-center text-sm font-medium hover:bg-slate-50"
-                  href={downloadUrl}
-                  download={resultName}
-                >
-                  Download {resultName}
-                </a>
-                <p className="text-xs text-slate-500">
-                  Before: {(originalSizeBytes / 1024).toFixed(1)} KB
-                </p>
-              </div>
-            ) : null}
-          </div>
-        </div>
-
-        {(beforePreviewUrls.length > 0 || (downloadUrl && !resultName.endsWith(".zip"))) && (
-          <div className="mt-6 grid gap-4 md:grid-cols-2">
-            <div className="rounded-xl border border-slate-200 p-3">
-              <p className="mb-2 text-sm font-medium">Before</p>
-              {beforePreviewUrls[0] ? (
-                <Image
-                  src={beforePreviewUrls[0]}
-                  alt="Before preview"
-                  width={640}
-                  height={360}
-                  className="h-auto w-full rounded-md object-contain"
-                  unoptimized
-                />
+              {error ? <p className="mt-2 text-sm text-red-600">{error}</p> : null}
+              {downloadUrl ? (
+                <div className="mt-6 space-y-2">
+                  <a
+                    className="block w-full rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-center text-sm font-semibold text-gray-800 shadow-sm transition hover:bg-gray-50 dark:border-gray-600 dark:bg-gray-950 dark:text-gray-100 dark:hover:bg-gray-800"
+                    href={downloadUrl}
+                    download={resultName}
+                  >
+                    Download {resultName}
+                  </a>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">
+                    Before: {(originalSizeBytes / 1024).toFixed(1)} KB
+                  </p>
+                </div>
               ) : null}
             </div>
-            <div className="rounded-xl border border-slate-200 p-3">
-              <p className="mb-2 text-sm font-medium">After</p>
-              {downloadUrl && !resultName.endsWith(".zip") ? (
-                <Image
-                  src={downloadUrl}
-                  alt="After preview"
-                  width={640}
-                  height={360}
-                  className="h-auto w-full rounded-md object-contain"
-                  unoptimized
-                />
-              ) : (
-                <p className="text-sm text-slate-500">Convert an image to preview the result.</p>
-              )}
-            </div>
+
+            {(beforePreviewUrls.length > 0 || (downloadUrl && !resultName.endsWith(".zip"))) && (
+              <div className="grid gap-4 md:grid-cols-2">
+                <div className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-700 dark:bg-gray-900">
+                  <p className="mb-2 text-sm font-semibold text-gray-900 dark:text-white">Before</p>
+                  {beforePreviewUrls[0] ? (
+                    <Image
+                      src={beforePreviewUrls[0]}
+                      alt="Before preview"
+                      width={640}
+                      height={360}
+                      className="h-auto w-full rounded-lg object-contain"
+                      unoptimized
+                    />
+                  ) : null}
+                </div>
+                <div className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-700 dark:bg-gray-900">
+                  <p className="mb-2 text-sm font-semibold text-gray-900 dark:text-white">After</p>
+                  {downloadUrl && !resultName.endsWith(".zip") ? (
+                    <Image
+                      src={downloadUrl}
+                      alt="After preview"
+                      width={640}
+                      height={360}
+                      className="h-auto w-full rounded-lg object-contain"
+                      unoptimized
+                    />
+                  ) : (
+                    <p className="text-sm text-gray-500 dark:text-gray-400">Convert an image to preview the result.</p>
+                  )}
+                </div>
+              </div>
+            )}
           </div>
-        )}
       </div>
     </section>
   );

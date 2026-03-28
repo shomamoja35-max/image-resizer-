@@ -1,6 +1,7 @@
-import Link from "next/link";
 import { notFound } from "next/navigation";
 
+import { SiteFooter } from "@/components/site-footer";
+import { SiteHeader } from "@/components/site-header";
 import { isLocale, locales } from "@/lib/i18n/config";
 
 export function generateStaticParams() {
@@ -20,19 +21,14 @@ export default async function LocaleLayout({
   const isRTL = locale === "ar";
 
   return (
-    <div dir={isRTL ? "rtl" : "ltr"} lang={locale} className="min-h-screen">
-      <header className="border-b border-slate-200 bg-white">
-        <div className="container-shell flex h-16 items-center justify-between">
-          <Link href={`/${locale}`} className="text-xl font-semibold">
-            Converterio
-          </Link>
-          <nav className="flex items-center gap-4 text-sm">
-            <Link href={`/${locale}/image-converter`}>Tools</Link>
-            <Link href={`/${locale}/blog`}>Blog</Link>
-          </nav>
-        </div>
-      </header>
-      <main>{children}</main>
+    <div
+      dir={isRTL ? "rtl" : "ltr"}
+      lang={locale}
+      className="flex min-h-screen flex-col bg-white text-gray-900 dark:bg-gray-950 dark:text-gray-100"
+    >
+      <SiteHeader locale={locale} />
+      <main className="flex-1">{children}</main>
+      <SiteFooter locale={locale} />
     </div>
   );
 }

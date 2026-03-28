@@ -1,30 +1,15 @@
 import type { MetadataRoute } from "next";
 
 import { locales } from "@/lib/i18n/config";
+import { ALLOWED_TOOL_SLUGS } from "@/lib/tools/allowed-tools";
 
-const tools = [
-  "",
-  "image-resizer",
-  "image-compressor",
-  "image-converter",
-  "crop-image",
-  "rotate-image",
-  "flip-image",
-  "bulk-image-converter",
-  "png-to-jpg",
-  "jpg-to-png",
-  "png-to-webp",
-  "webp-to-jpg",
-  "webp-to-png",
-  "avif-to-jpg",
-  "blog",
-];
+const tools = ["", ...ALLOWED_TOOL_SLUGS, "blog"];
 
 export default function sitemap(): MetadataRoute.Sitemap {
   return locales.flatMap((locale) =>
     tools.map((slug) => ({
       url: `https://converterio.app/${locale}${slug ? `/${slug}` : ""}`,
-      changeFrequency: "weekly",
+      changeFrequency: "weekly" as const,
       priority: slug ? 0.8 : 1,
     }))
   );

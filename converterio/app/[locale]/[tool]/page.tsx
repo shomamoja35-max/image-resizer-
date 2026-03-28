@@ -4,22 +4,7 @@ import { notFound } from "next/navigation";
 import { ConverterWorkbench } from "@/components/converter-workbench";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
 import type { Locale } from "@/lib/i18n/config";
-
-const allowedTools = new Set([
-  "image-resizer",
-  "image-compressor",
-  "image-converter",
-  "crop-image",
-  "rotate-image",
-  "flip-image",
-  "bulk-image-converter",
-  "png-to-jpg",
-  "jpg-to-png",
-  "png-to-webp",
-  "webp-to-jpg",
-  "webp-to-png",
-  "avif-to-jpg",
-]);
+import { allowedToolsSet } from "@/lib/tools/allowed-tools";
 
 function humanizeTool(tool: string) {
   return tool.split("-").join(" ").replace(/\b\w/g, (m) => m.toUpperCase());
@@ -31,7 +16,7 @@ export async function generateMetadata({
   params: Promise<{ locale: Locale; tool: string }>;
 }): Promise<Metadata> {
   const { locale, tool } = await params;
-  if (!allowedTools.has(tool)) return {};
+  if (!allowedToolsSet.has(tool)) return {};
 
   const humanTitle = humanizeTool(tool);
   const title = `${humanTitle} Online Free`;
@@ -64,7 +49,7 @@ export default async function ToolPage({
   params: Promise<{ locale: Locale; tool: string }>;
 }) {
   const { locale, tool } = await params;
-  if (!allowedTools.has(tool)) notFound();
+  if (!allowedToolsSet.has(tool)) notFound();
 
   const dict = await getDictionary(locale);
   const title = humanizeTool(tool);
@@ -127,37 +112,39 @@ export default async function ToolPage({
         defaultFormat={tool.includes("png") ? "png" : "jpeg"}
       />
 
-      <section className="container-shell pb-12">
-        <div className="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-slate-200">
-          <h2 className="text-2xl font-semibold">How to {title.toLowerCase()}</h2>
-          <ol className="mt-3 list-decimal space-y-2 pl-5 text-slate-700">
+      <section className="border-t border-gray-100 bg-slate-50 py-12 dark:border-gray-800 dark:bg-gray-900/40">
+        <div className="container-shell">
+        <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-900 md:p-8">
+          <h2 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">How to {title.toLowerCase()}</h2>
+          <ol className="mt-4 list-decimal space-y-2 pl-5 text-gray-700 dark:text-gray-300">
             <li>Upload your image files by drag-drop, file picker, paste or URL.</li>
             <li>Set width, height, quality and output format based on your target use.</li>
             <li>Click convert and download the result as a file or ZIP batch.</li>
           </ol>
 
-          <h3 className="mt-8 text-xl font-semibold">FAQ</h3>
+          <h3 className="mt-8 text-xl font-bold text-gray-900 dark:text-white">FAQ</h3>
           <div className="mt-3 space-y-3">
             {faqItems.map((item) => (
-              <details key={item.q} className="rounded-lg border border-slate-200 p-3">
-                <summary className="cursor-pointer font-medium">{item.q}</summary>
-                <p className="mt-2 text-slate-700">{item.a}</p>
+              <details key={item.q} className="rounded-lg border border-gray-200 bg-gray-50/50 p-3 dark:border-gray-700 dark:bg-gray-950/50">
+                <summary className="cursor-pointer font-medium text-gray-900 dark:text-white">{item.q}</summary>
+                <p className="mt-2 text-gray-700 dark:text-gray-300">{item.a}</p>
               </details>
             ))}
           </div>
 
-          <h3 className="mt-8 text-xl font-semibold">Related tools</h3>
+          <h3 className="mt-8 text-xl font-bold text-gray-900 dark:text-white">Related tools</h3>
           <div className="mt-3 flex flex-wrap gap-2">
             {internalLinks.map((slug) => (
               <a
                 key={slug}
                 href={`/${locale}/${slug}`}
-                className="rounded-full border border-slate-300 px-3 py-1 text-sm hover:bg-slate-50"
+                className="rounded-full border border-gray-300 bg-white px-3 py-1.5 text-sm font-medium text-gray-800 transition hover:border-blue-300 hover:bg-blue-50 hover:text-blue-700 dark:border-gray-600 dark:bg-gray-950 dark:text-gray-200 dark:hover:border-blue-600 dark:hover:bg-blue-950/40 dark:hover:text-blue-400"
               >
                 {humanizeTool(slug)}
               </a>
             ))}
           </div>
+        </div>
         </div>
       </section>
     </>
