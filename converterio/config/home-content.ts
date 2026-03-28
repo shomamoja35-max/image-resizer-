@@ -1,71 +1,79 @@
 export const homeContent = {
   hero: {
-    title: "Professional Online Image Processing Suite",
+    title: "Free Online Image Resizer, Compressor & Converter",
     subtitle:
-      "Fast, secure, and high-quality tools to resize, compress, and convert images instantly in your browser.",
-    trustBadge: "Trusted by 1M+ Users Worldwide",
-    primaryCta: "Get started free",
+      "Resize images by pixel or percentage, compress by quality, and convert between JPG, PNG, and WEBP — all in your browser. No upload, no login, no file size limit.",
   },
+  heroBadges: [
+    { emoji: "📐", label: "Resize px & %" },
+    { emoji: "🗜️", label: "Compress" },
+    { emoji: "🔄", label: "Convert" },
+    { emoji: "🔒", label: "No Upload" },
+    { emoji: "🆓", label: "Free" },
+  ],
   howItWorks: [
     {
       step: "01",
-      title: "Upload Images",
-      desc: "Select files from your computer, Dropbox, or Google Drive.",
+      title: "Upload Image",
+      desc: "Drag & drop or upload JPG, PNG, or WEBP.",
     },
     {
       step: "02",
-      title: "Configure Settings",
-      desc: "Choose your target dimensions, format, or quality level.",
+      title: "Set Size & options",
+      desc: "Choose pixels or percentage, quality, and output format.",
     },
     {
       step: "03",
-      title: "Download Result",
-      desc: "Get your optimized images instantly as a single file or ZIP.",
+      title: "Download",
+      desc: "Download instantly after processing — no login required.",
     },
   ],
   features: [
     {
       title: "Privacy First",
-      description: "Files are processed in-browser and never stored on our servers.",
+      description:
+        "Images are processed using browser APIs and never leave your device. No server upload — everything runs locally in your browser.",
       icon: "ShieldCheck" as const,
     },
     {
-      title: "Batch Support",
-      description: "Process hundreds of images at once with no speed drops.",
+      title: "Batch friendly",
+      description:
+        "No file size limit. Work through multiple files in one session and keep quality under control with presets for web, social, and email.",
       icon: "Layers" as const,
     },
     {
-      title: "Smart Compression",
-      description: "Reduce file sizes by up to 90% while keeping pixel clarity.",
+      title: "Smart compression",
+      description:
+        "Use quality between 75%–85% to cut size by up to 70% without visible loss. Adjust from 1% to 100% whenever you need.",
       icon: "Zap" as const,
     },
   ],
   services: [
     {
       name: "Image Resizer",
-      desc: "Change dimensions for social media or web.",
+      desc: "Set width and height or scale by percentage for web and social.",
       slug: "image-resizer",
     },
     {
       name: "Compressor",
-      desc: "Reduce file size without losing quality.",
+      desc: "Shrink files with the quality slider — web, social, and email presets.",
       slug: "image-compressor",
     },
     {
       name: "Format Converter",
-      desc: "Convert between JPG, PNG, WebP, and HEIC.",
+      desc: "Convert between JPG, PNG, and WEBP — smaller WEBP files in one click.",
       slug: "image-converter",
     },
     {
       name: "Crop Tool",
-      desc: "Perfectly frame your photos in seconds.",
+      desc: "Frame photos precisely before export.",
       slug: "crop-image",
     },
   ],
   about: {
     heading: "Why Choose Converterio?",
     content:
-      "Converterio is a powerful, free online image processing suite designed for speed and privacy. We provide professional-grade tools like Image Resizing, Compression, and Conversion directly in your browser, ensuring your files never stay on our servers.",
+      "Converterio is a free, fast image toolkit built for privacy: resize by pixel or percentage, compress with clear quality control, and convert JPG, PNG, and WEBP without uploading your files. No account, no watermark — just your browser and your images.",
   },
   stats: [
     { value: "1M+", label: "Users worldwide" },
@@ -74,21 +82,30 @@ export const homeContent = {
     { value: "0", label: "Permanent file storage" },
   ],
   faqs: [
+    { q: "Is there a file size limit?", a: "No — unlimited file size." },
+    { q: "What formats are supported?", a: "JPG, PNG, WEBP." },
+    { q: "Is there a watermark?", a: "No watermark is added." },
     {
-      q: "Is it safe to upload my photos?",
-      a: "Yes. Processing happens in your browser. We never store your data.",
+      q: "Pixel vs Percentage?",
+      a: "Pixels = exact size, Percentage = proportional scaling.",
     },
     {
-      q: "Does it support bulk conversion?",
-      a: "Absolutely. You can upload and process up to 50 images at once.",
+      q: "Does Converterio upload my images to a server?",
+      a: "No — everything runs locally in your browser. Images are processed with browser APIs and never leave your device.",
     },
     {
-      q: "What formats are supported?",
-      a: "We support JPG, PNG, WebP, GIF, AVIF, and HEIC.",
+      q: "How do I convert JPG to WEBP?",
+      a: "Upload your image, choose WEBP, and download a smaller file instantly. WEBP often reduces size by 25–34% compared to JPG.",
     },
   ],
   cta: {
-    title: "Ready to optimize your images?",
-    buttonText: "Start Resizing Now",
+    title: "Ready to resize, compress, or convert?",
+    buttonText: "Open Image Resizer",
+  },
+  sectionTitles: {
+    howItWorks: "How it works",
+    ourTools: "Our tools",
+    ourToolsSubtitle: "Everything you need to prepare images for the web or social media.",
+    faq: "Frequently asked questions",
   },
 } as const;

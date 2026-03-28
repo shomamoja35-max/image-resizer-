@@ -13,6 +13,8 @@ type Props = {
   /** Match landing hero layout: large dropzone, optional title hidden when hero is above */
   variant?: "default" | "landing";
   hideTitle?: boolean;
+  /** Warm dark homepage palette (#0c0a08 background pages) */
+  tone?: "default" | "espresso";
 };
 
 export function ConverterWorkbench({
@@ -22,6 +24,7 @@ export function ConverterWorkbench({
   defaultFormat = "jpeg",
   variant = "default",
   hideTitle = false,
+  tone = "default",
 }: Props) {
   const inputId = useId();
   const [files, setFiles] = useState<File[]>([]);
@@ -165,20 +168,28 @@ export function ConverterWorkbench({
     }
   }
 
+  const espresso = tone === "espresso";
   const sectionPad = variant === "landing" ? "py-8 md:py-12" : "py-8 md:py-10";
-  const titleClass =
-    variant === "landing"
+  /** Narrow column so dropzone, controls, and CTAs are not stretched on large screens */
+  const shellClass = espresso
+    ? `mx-auto w-full max-w-3xl px-4 py-6 sm:px-6 md:py-8 lg:px-8`
+    : `mx-auto w-full max-w-3xl px-4 sm:px-6 lg:px-8 ${sectionPad}`;
+  const titleClass = espresso
+    ? variant === "landing"
+      ? "text-3xl font-bold tracking-tight text-[#ede0d4] md:text-4xl"
+      : "text-2xl font-bold tracking-tight text-[#ede0d4] md:text-3xl"
+    : variant === "landing"
       ? "text-3xl font-bold tracking-tight text-gray-900 dark:text-white md:text-4xl"
       : "text-2xl font-bold tracking-tight text-gray-900 dark:text-white md:text-3xl";
 
   return (
-    <section className={`container-shell ${sectionPad}`}>
+    <section className={shellClass}>
       <div className="w-full min-w-0">
           {!hideTitle ? (
             <div className={variant === "landing" ? "text-center" : ""}>
               <h1 className={titleClass}>{title}</h1>
               <p
-                className={`mt-2 text-base text-gray-600 dark:text-gray-400 ${variant === "landing" ? "mx-auto max-w-2xl" : ""}`}
+                className={`mt-2 text-base ${espresso ? "text-[#ede0d4]/75" : "text-gray-600 dark:text-gray-400"} ${variant === "landing" ? "mx-auto max-w-2xl" : ""}`}
               >
                 {subtitle}
               </p>
@@ -200,11 +211,21 @@ export function ConverterWorkbench({
             >
               <label
                 htmlFor={inputId}
-                className="flex min-h-[220px] cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed border-blue-200 bg-blue-50/80 p-8 text-center transition hover:border-blue-300 hover:bg-blue-50 dark:border-blue-900/50 dark:bg-blue-950/40 dark:hover:border-blue-800 dark:hover:bg-blue-950/60 md:min-h-[280px] md:p-12"
+                className={
+                  espresso
+                    ? "flex min-h-[220px] cursor-pointer flex-col items-center justify-center rounded-xl border border-dashed border-[#555] bg-[#141210] p-8 text-center transition hover:border-[#4caf84]/60 md:min-h-[260px] md:p-10"
+                    : "flex min-h-[220px] cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed border-blue-200 bg-blue-50/80 p-8 text-center transition hover:border-blue-300 hover:bg-blue-50 dark:border-blue-900/50 dark:bg-blue-950/40 dark:hover:border-blue-800 dark:hover:bg-blue-950/60 md:min-h-[280px] md:p-12"
+                }
               >
-                <span className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-white shadow-sm ring-1 ring-blue-100 dark:bg-gray-900 dark:ring-blue-900/50">
+                <span
+                  className={
+                    espresso
+                      ? "mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-[#1f1c18] ring-1 ring-white/10"
+                      : "mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-white shadow-sm ring-1 ring-blue-100 dark:bg-gray-900 dark:ring-blue-900/50"
+                  }
+                >
                   <svg
-                    className="h-8 w-8 text-blue-500 dark:text-blue-400"
+                    className={espresso ? "h-8 w-8 text-[#4caf84]" : "h-8 w-8 text-blue-500 dark:text-blue-400"}
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
@@ -219,18 +240,30 @@ export function ConverterWorkbench({
                   </svg>
                 </span>
 
-                <span className="inline-flex items-center gap-2 rounded-lg border border-blue-200 bg-white px-5 py-2.5 text-sm font-semibold text-blue-700 shadow-sm transition hover:bg-blue-50 dark:border-blue-800 dark:bg-gray-900 dark:text-blue-300 dark:hover:bg-blue-950/50">
+                <span
+                  className={
+                    espresso
+                      ? "inline-flex items-center gap-2 rounded-lg border border-[#4caf84]/50 bg-[#1f1c18] px-5 py-2.5 text-sm font-semibold text-[#ede0d4] transition hover:bg-[#2a2620]"
+                      : "inline-flex items-center gap-2 rounded-lg border border-blue-200 bg-white px-5 py-2.5 text-sm font-semibold text-blue-700 shadow-sm transition hover:bg-blue-50 dark:border-blue-800 dark:bg-gray-900 dark:text-blue-300 dark:hover:bg-blue-950/50"
+                  }
+                >
                   Select Images
                   <svg className="h-4 w-4 opacity-70" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                   </svg>
                 </span>
 
-                <span className="mt-2 text-sm text-gray-600 dark:text-gray-400">or drag and drop images here</span>
+                <span className={espresso ? "mt-2 text-sm text-[#ede0d4]/75" : "mt-2 text-sm text-gray-600 dark:text-gray-400"}>
+                  or drag and drop images here
+                </span>
                 {selectedLabel ? (
-                  <span className="mt-2 text-sm font-medium text-blue-700 dark:text-blue-400">{selectedLabel}</span>
+                  <span className={espresso ? "mt-2 text-sm font-medium text-[#4caf84]" : "mt-2 text-sm font-medium text-blue-700 dark:text-blue-400"}>
+                    {selectedLabel}
+                  </span>
                 ) : null}
-                <p className="mt-3 text-xs text-gray-500 dark:text-gray-500">Max file size 20MB. All files are secure.</p>
+                <p className={espresso ? "mt-3 text-xs text-[#ede0d4]/50" : "mt-3 text-xs text-gray-500 dark:text-gray-500"}>
+                  Max file size 20MB. All files are secure.
+                </p>
 
                 <input
                   id={inputId}
@@ -245,14 +278,22 @@ export function ConverterWorkbench({
 
               <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
                 <input
-                  className="w-full flex-1 rounded-lg border border-gray-300 bg-white px-3 py-2.5 text-sm text-gray-900 shadow-sm placeholder:text-gray-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-100 dark:placeholder:text-gray-500"
+                  className={
+                    espresso
+                      ? "w-full flex-1 rounded-lg border border-white/15 bg-[#0c0a08] px-3 py-2.5 text-sm text-[#ede0d4] placeholder:text-[#ede0d4]/40 focus:border-[#4caf84]/60 focus:outline-none focus:ring-1 focus:ring-[#4caf84]/40"
+                      : "w-full flex-1 rounded-lg border border-gray-300 bg-white px-3 py-2.5 text-sm text-gray-900 shadow-sm placeholder:text-gray-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-100 dark:placeholder:text-gray-500"
+                  }
                   placeholder="Paste image URL"
                   value={sourceUrl}
                   onChange={(e) => setSourceUrl(e.target.value)}
                 />
                 <button
                   type="button"
-                  className="rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm font-semibold text-gray-700 shadow-sm transition hover:bg-gray-50 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-200 dark:hover:bg-gray-800"
+                  className={
+                    espresso
+                      ? "rounded-lg border border-white/15 bg-[#1f1c18] px-4 py-2.5 text-sm font-semibold text-[#ede0d4] transition hover:bg-[#2a2620]"
+                      : "rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm font-semibold text-gray-700 shadow-sm transition hover:bg-gray-50 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-200 dark:hover:bg-gray-800"
+                  }
                   onClick={handleUrlUpload}
                 >
                   Add URL
@@ -260,34 +301,56 @@ export function ConverterWorkbench({
               </div>
             </div>
 
-            <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm ring-1 ring-gray-100 dark:border-gray-700 dark:bg-gray-900 dark:ring-gray-800 md:p-6">
+            <div
+              className={
+                espresso
+                  ? "rounded-xl border border-white/10 bg-[#141210] p-5 md:p-6"
+                  : "rounded-xl border border-gray-200 bg-white p-5 shadow-sm ring-1 ring-gray-100 dark:border-gray-700 dark:bg-gray-900 dark:ring-gray-800 md:p-6"
+              }
+            >
               <div className="grid grid-cols-2 gap-3">
                 <label className="text-sm">
-                  <span className="mb-1 block font-medium text-gray-700 dark:text-gray-300">Width</span>
+                  <span className={espresso ? "mb-1 block font-medium text-[#ede0d4]/85" : "mb-1 block font-medium text-gray-700 dark:text-gray-300"}>
+                    Width
+                  </span>
                   <input
                     type="number"
                     placeholder="auto"
-                    className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-gray-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 dark:border-gray-600 dark:bg-gray-950 dark:text-gray-100"
+                    className={
+                      espresso
+                        ? "w-full rounded-lg border border-white/15 bg-[#0c0a08] px-3 py-2 text-[#ede0d4] focus:border-[#4caf84]/60 focus:outline-none focus:ring-1 focus:ring-[#4caf84]/30"
+                        : "w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-gray-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 dark:border-gray-600 dark:bg-gray-950 dark:text-gray-100"
+                    }
                     value={width}
                     onChange={(e) => handleWidthChange(e.target.value)}
                   />
                 </label>
                 <label className="text-sm">
-                  <span className="mb-1 block font-medium text-gray-700 dark:text-gray-300">Height</span>
+                  <span className={espresso ? "mb-1 block font-medium text-[#ede0d4]/85" : "mb-1 block font-medium text-gray-700 dark:text-gray-300"}>
+                    Height
+                  </span>
                   <input
                     type="number"
                     placeholder="auto"
-                    className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-gray-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 dark:border-gray-600 dark:bg-gray-950 dark:text-gray-100"
+                    className={
+                      espresso
+                        ? "w-full rounded-lg border border-white/15 bg-[#0c0a08] px-3 py-2 text-[#ede0d4] focus:border-[#4caf84]/60 focus:outline-none focus:ring-1 focus:ring-[#4caf84]/30"
+                        : "w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-gray-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 dark:border-gray-600 dark:bg-gray-950 dark:text-gray-100"
+                    }
                     value={height}
                     onChange={(e) => handleHeightChange(e.target.value)}
                   />
                 </label>
               </div>
 
-              <label className="mt-4 flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300">
+              <label className={espresso ? "mt-4 flex items-center gap-2 text-sm text-[#ede0d4]/85" : "mt-4 flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300"}>
                 <input
                   type="checkbox"
-                  className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-950"
+                  className={
+                    espresso
+                      ? "h-4 w-4 rounded border-white/25 bg-[#0c0a08] text-[#4caf84] focus:ring-[#4caf84]"
+                      : "h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-950"
+                  }
                   checked={maintainRatio}
                   onChange={(e) => setMaintainRatio(e.target.checked)}
                 />
@@ -295,21 +358,29 @@ export function ConverterWorkbench({
               </label>
 
               <div className="mt-4">
-                <p className="mb-1 text-sm font-medium text-gray-700 dark:text-gray-300">Compression ({quality}%)</p>
+                <p className={espresso ? "mb-1 text-sm font-medium text-[#ede0d4]/85" : "mb-1 text-sm font-medium text-gray-700 dark:text-gray-300"}>
+                  Compression ({quality}%)
+                </p>
                 <input
                   type="range"
                   min={0}
                   max={100}
                   value={quality}
                   onChange={(e) => setQuality(Number(e.target.value))}
-                  className="h-2 w-full cursor-pointer accent-blue-600"
+                  className={espresso ? "h-2 w-full cursor-pointer accent-[#4caf84]" : "h-2 w-full cursor-pointer accent-blue-600"}
                 />
               </div>
 
               <div className="mt-4">
-                <p className="mb-1 text-sm font-medium text-gray-700 dark:text-gray-300">Convert to</p>
+                <p className={espresso ? "mb-1 text-sm font-medium text-[#ede0d4]/85" : "mb-1 text-sm font-medium text-gray-700 dark:text-gray-300"}>
+                  Convert to
+                </p>
                 <select
-                  className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2.5 text-gray-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 dark:border-gray-600 dark:bg-gray-950 dark:text-gray-100"
+                  className={
+                    espresso
+                      ? "w-full rounded-lg border border-white/15 bg-[#0c0a08] px-3 py-2.5 text-[#ede0d4] focus:border-[#4caf84]/60 focus:outline-none focus:ring-1 focus:ring-[#4caf84]/30"
+                      : "w-full rounded-lg border border-gray-300 bg-white px-3 py-2.5 text-gray-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 dark:border-gray-600 dark:bg-gray-950 dark:text-gray-100"
+                  }
                   value={format}
                   onChange={(e) => setFormat(e.target.value)}
                 >
@@ -321,10 +392,14 @@ export function ConverterWorkbench({
                 </select>
               </div>
 
-              <label className="mt-4 flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300">
+              <label className={espresso ? "mt-4 flex items-center gap-2 text-sm text-[#ede0d4]/85" : "mt-4 flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300"}>
                 <input
                   type="checkbox"
-                  className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-950"
+                  className={
+                    espresso
+                      ? "h-4 w-4 rounded border-white/25 bg-[#0c0a08] text-[#4caf84] focus:ring-[#4caf84]"
+                      : "h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-950"
+                  }
                   checked={stripMetadata}
                   onChange={(e) => setStripMetadata(e.target.checked)}
                 />
@@ -333,7 +408,11 @@ export function ConverterWorkbench({
 
               <button
                 type="button"
-                className="mt-4 w-full rounded-lg bg-blue-600 px-4 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700 disabled:opacity-60"
+                className={
+                  espresso
+                    ? "mt-4 w-full rounded-lg bg-[#4caf84] px-4 py-3 text-sm font-semibold text-[#0c0a08] transition hover:bg-[#3d9a72] disabled:opacity-60"
+                    : "mt-4 w-full rounded-lg bg-blue-600 px-4 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700 disabled:opacity-60"
+                }
                 onClick={handleConvert}
                 disabled={isProcessing}
               >
@@ -344,13 +423,17 @@ export function ConverterWorkbench({
               {downloadUrl ? (
                 <div className="mt-6 space-y-2">
                   <a
-                    className="block w-full rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-center text-sm font-semibold text-gray-800 shadow-sm transition hover:bg-gray-50 dark:border-gray-600 dark:bg-gray-950 dark:text-gray-100 dark:hover:bg-gray-800"
+                    className={
+                      espresso
+                        ? "block w-full rounded-lg border border-white/15 bg-[#1f1c18] px-4 py-2.5 text-center text-sm font-semibold text-[#ede0d4] transition hover:bg-[#2a2620]"
+                        : "block w-full rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-center text-sm font-semibold text-gray-800 shadow-sm transition hover:bg-gray-50 dark:border-gray-600 dark:bg-gray-950 dark:text-gray-100 dark:hover:bg-gray-800"
+                    }
                     href={downloadUrl}
                     download={resultName}
                   >
                     Download {resultName}
                   </a>
-                  <p className="text-xs text-gray-500 dark:text-gray-400">
+                  <p className={espresso ? "text-xs text-[#ede0d4]/50" : "text-xs text-gray-500 dark:text-gray-400"}>
                     Before: {(originalSizeBytes / 1024).toFixed(1)} KB
                   </p>
                 </div>
@@ -359,8 +442,10 @@ export function ConverterWorkbench({
 
             {(beforePreviewUrls.length > 0 || (downloadUrl && !resultName.endsWith(".zip"))) && (
               <div className="grid gap-4 md:grid-cols-2">
-                <div className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-700 dark:bg-gray-900">
-                  <p className="mb-2 text-sm font-semibold text-gray-900 dark:text-white">Before</p>
+                <div className={espresso ? "rounded-xl border border-white/10 bg-[#141210] p-4" : "rounded-xl border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-700 dark:bg-gray-900"}>
+                  <p className={espresso ? "mb-2 text-sm font-semibold text-[#ede0d4]" : "mb-2 text-sm font-semibold text-gray-900 dark:text-white"}>
+                    Before
+                  </p>
                   {beforePreviewUrls[0] ? (
                     <Image
                       src={beforePreviewUrls[0]}
@@ -372,8 +457,10 @@ export function ConverterWorkbench({
                     />
                   ) : null}
                 </div>
-                <div className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-700 dark:bg-gray-900">
-                  <p className="mb-2 text-sm font-semibold text-gray-900 dark:text-white">After</p>
+                <div className={espresso ? "rounded-xl border border-white/10 bg-[#141210] p-4" : "rounded-xl border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-700 dark:bg-gray-900"}>
+                  <p className={espresso ? "mb-2 text-sm font-semibold text-[#ede0d4]" : "mb-2 text-sm font-semibold text-gray-900 dark:text-white"}>
+                    After
+                  </p>
                   {downloadUrl && !resultName.endsWith(".zip") ? (
                     <Image
                       src={downloadUrl}
@@ -384,7 +471,9 @@ export function ConverterWorkbench({
                       unoptimized
                     />
                   ) : (
-                    <p className="text-sm text-gray-500 dark:text-gray-400">Convert an image to preview the result.</p>
+                    <p className={espresso ? "text-sm text-[#ede0d4]/50" : "text-sm text-gray-500 dark:text-gray-400"}>
+                      Convert an image to preview the result.
+                    </p>
                   )}
                 </div>
               </div>

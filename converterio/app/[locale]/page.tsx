@@ -15,53 +15,53 @@ export default async function LocaleHome({
   const { locale } = await params;
   const dict = await getDictionary(locale);
   const p = `/${locale}`;
+  const { sectionTitles: st } = homeContent;
 
   return (
     <>
-      {/* Hero */}
+      {/* Hero + tool */}
       <section className="bg-white pt-12 pb-10 dark:bg-gray-950 md:pt-20 md:pb-14">
-        <div className="container-shell text-center">
-          <h1 className="mx-auto max-w-4xl text-4xl font-bold tracking-tight text-gray-900 dark:text-white md:text-5xl lg:text-6xl">
-            {homeContent.hero.title}
-          </h1>
-          <p className="mx-auto mt-5 max-w-2xl text-lg text-gray-600 dark:text-gray-400 md:text-xl">
-            {homeContent.hero.subtitle}
-          </p>
-          <div className="mt-8 flex flex-col items-center gap-4">
-            <Link
-              href={`${p}/image-resizer`}
-              className="inline-flex items-center justify-center rounded-lg bg-blue-600 px-8 py-3.5 text-base font-semibold text-white shadow-md transition hover:bg-blue-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
-            >
-              {homeContent.hero.primaryCta}
-            </Link>
-            <p className="text-sm font-medium text-slate-500 dark:text-slate-400">{homeContent.hero.trustBadge}</p>
+        <div className="container-shell">
+          <div className="mx-auto max-w-4xl text-center">
+            <h1 className="text-4xl font-bold tracking-tight text-gray-900 dark:text-white md:text-5xl lg:text-6xl">
+              {homeContent.hero.title}
+            </h1>
+            <p className="mx-auto mt-5 max-w-2xl text-lg text-gray-600 dark:text-gray-400 md:text-xl">
+              {homeContent.hero.subtitle}
+            </p>
+          </div>
+          <div className="mt-10" id="tool">
+            <ConverterWorkbench
+              variant="landing"
+              hideTitle
+              title={dict.heroTitle}
+              subtitle={dict.heroSubtitle}
+              convertLabel={dict.convertButton}
+              defaultFormat="jpeg"
+            />
+          </div>
+          <div className="mt-8 flex flex-wrap justify-center gap-x-5 gap-y-2 text-sm text-gray-600 dark:text-gray-400">
+            {homeContent.heroBadges.map((b) => (
+              <span key={b.label} className="inline-flex items-center gap-1.5">
+                <span aria-hidden>{b.emoji}</span>
+                {b.label}
+              </span>
+            ))}
           </div>
         </div>
-      </section>
-
-      {/* Tool / workbench */}
-      <section id="tool" className="scroll-mt-20">
-        <ConverterWorkbench
-          variant="landing"
-          hideTitle
-          title={dict.heroTitle}
-          subtitle={dict.heroSubtitle}
-          convertLabel={dict.convertButton}
-          defaultFormat="jpeg"
-        />
       </section>
 
       {/* How it works */}
       <section className="bg-white py-16 dark:bg-gray-950 md:py-20">
         <div className="container-shell">
           <h2 className="text-center text-3xl font-bold tracking-tight text-gray-900 dark:text-white md:text-4xl">
-            How it works
+            {st.howItWorks}
           </h2>
           <div className="mt-12 grid gap-12 md:grid-cols-3 md:gap-8 lg:mt-16 lg:gap-12">
             {homeContent.howItWorks.map((item) => (
               <div key={item.step} className="relative pt-4 text-center md:text-left">
                 <span
-                  className="pointer-events-none absolute left-1/2 top-0 -translate-x-1/2 select-none text-7xl font-bold leading-none text-slate-100 dark:text-slate-800/80 md:left-0 md:translate-x-0 md:text-8xl"
+                  className="pointer-events-none absolute left-1/2 top-0 -translate-x-1/2 select-none text-7xl font-bold leading-none text-blue-50 dark:text-blue-950/40 md:left-0 md:translate-x-0 md:text-8xl"
                   aria-hidden
                 >
                   {item.step}
@@ -76,7 +76,7 @@ export default async function LocaleHome({
         </div>
       </section>
 
-      {/* Features (3 icons) */}
+      {/* Features */}
       <section className="border-y border-slate-100 bg-slate-50/50 py-16 dark:border-slate-800 dark:bg-slate-900/20 md:py-20">
         <div className="container-shell">
           <div className="grid gap-12 sm:grid-cols-2 lg:grid-cols-3 lg:gap-16">
@@ -93,15 +93,13 @@ export default async function LocaleHome({
         </div>
       </section>
 
-      {/* Services / tool grid */}
+      {/* Our tools */}
       <section className="bg-white py-16 dark:bg-gray-950 md:py-20">
         <div className="container-shell">
           <h2 className="text-center text-3xl font-bold tracking-tight text-gray-900 dark:text-white md:text-4xl">
-            Our tools
+            {st.ourTools}
           </h2>
-          <p className="mx-auto mt-3 max-w-2xl text-center text-gray-600 dark:text-gray-400">
-            Everything you need to prepare images for the web or social media.
-          </p>
+          <p className="mx-auto mt-3 max-w-2xl text-center text-gray-600 dark:text-gray-400">{st.ourToolsSubtitle}</p>
           <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:mt-16 lg:grid-cols-4 lg:gap-8">
             {homeContent.services.map((s) => (
               <div
@@ -126,7 +124,7 @@ export default async function LocaleHome({
       {/* About & stats */}
       <section className="bg-white py-16 dark:bg-gray-950 md:py-20">
         <div className="container-shell">
-          <div className="grid gap-12 lg:grid-cols-2 lg:gap-16 lg:items-center">
+          <div className="grid gap-12 lg:grid-cols-2 lg:items-center lg:gap-16">
             <div>
               <h2 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-white md:text-4xl">
                 {homeContent.about.heading}
@@ -142,7 +140,6 @@ export default async function LocaleHome({
                     i === 0 ? "border-b border-r border-slate-200 dark:border-slate-800" : "",
                     i === 1 ? "border-b border-slate-200 dark:border-slate-800" : "",
                     i === 2 ? "border-r border-slate-200 dark:border-slate-800" : "",
-                    i === 3 ? "" : "",
                   ].join(" ")}
                 >
                   <p className="text-2xl font-bold tabular-nums text-gray-900 dark:text-white sm:text-3xl">{stat.value}</p>
@@ -159,7 +156,7 @@ export default async function LocaleHome({
         <div className="container-shell">
           <div className="mx-auto max-w-3xl">
             <h2 className="text-center text-3xl font-bold tracking-tight text-gray-900 dark:text-white md:text-4xl">
-              Frequently asked questions
+              {st.faq}
             </h2>
             <div className="mt-12 lg:mt-16">
               <HomeFaqAccordion items={homeContent.faqs} />
