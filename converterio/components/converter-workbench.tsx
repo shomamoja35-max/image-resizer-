@@ -15,6 +15,8 @@ type Props = {
   hideTitle?: boolean;
   /** Warm dark homepage palette (#0c0a08 background pages) */
   tone?: "default" | "espresso";
+  /** When false, fills parent (e.g. tool page card) instead of max-w-3xl */
+  constrainWidth?: boolean;
 };
 
 export function ConverterWorkbench({
@@ -25,6 +27,7 @@ export function ConverterWorkbench({
   variant = "default",
   hideTitle = false,
   tone = "default",
+  constrainWidth = true,
 }: Props) {
   const inputId = useId();
   const [files, setFiles] = useState<File[]>([]);
@@ -170,10 +173,11 @@ export function ConverterWorkbench({
 
   const espresso = tone === "espresso";
   const sectionPad = variant === "landing" ? "py-8 md:py-12" : "py-8 md:py-10";
-  /** Narrow column so dropzone, controls, and CTAs are not stretched on large screens */
+  const widthClass = constrainWidth ? "max-w-3xl" : "max-w-full";
+  /** Narrow column on homepage; full width inside tool page card */
   const shellClass = espresso
-    ? `mx-auto w-full max-w-3xl px-4 py-6 sm:px-6 md:py-8 lg:px-8`
-    : `mx-auto w-full max-w-3xl px-4 sm:px-6 lg:px-8 ${sectionPad}`;
+    ? `mx-auto w-full ${widthClass} px-4 py-6 sm:px-6 md:py-8 lg:px-8`
+    : `mx-auto w-full ${widthClass} px-4 sm:px-6 lg:px-8 ${sectionPad}`;
   const titleClass = espresso
     ? variant === "landing"
       ? "text-3xl font-bold tracking-tight text-[#ede0d4] md:text-4xl"
